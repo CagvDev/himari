@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const WedgieLucy = require("../../Schemas/Atomics");
-const fs = require("fs");
-
+const WedgieLucy = require("../../Schemas/Wedgies/Atomics");
 const images = require("../../Json/wedgieLucy.json");
-
-const wedgieImages = images.wedgies;
+const { getRandomImage } = require("../../Functions/imageLoader");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -41,28 +38,13 @@ module.exports = {
         description = `**${invokerUser.displayName}** gave herself an atomic wedgie`;
       }
 
-      // ! Seleccionar aleatoriamente una imagen del array
-      let randomImage;
-
-      try {
-        if (wedgieImages.length > 0) {
-          randomImage =
-            wedgieImages[Math.floor(Math.random() * wedgieImages.length)];
-        } else {
-          throw new Error("El array de imágenes está vacío.");
-        }
-      } catch (error) {
-        console.error("Error al seleccionar la imagen:", error);
-        randomImage = wedgieImages[0];
-      }
-
       const embed = new EmbedBuilder()
         .setColor("Random")
         .addFields({
           name: " ",
           value: `${description} \n**${taggedUser.displayName}** has received **${wedgieLucy.tagCount}** atomic wedgies`,
         })
-        .setImage(randomImage);
+        .setImage(getRandomImage(images));
 
       await interaction.reply({
         embeds: [embed],
@@ -71,10 +53,12 @@ module.exports = {
       if (error.code === 10007) {
         // Member not found
         console.error("Miembro no encontrado en el servidor.");
-        await interaction.reply("Miembro no encontrado en el servidor.");
+        await interaction.reply("Member not found on the server.");
       } else {
         console.error("Error al procesar el comando:", error);
-        await interaction.reply("Ha ocurrido un error al procesar el comando.");
+        await interaction.reply(
+          "An error occurred while processing the command."
+        );
       }
     }
   },

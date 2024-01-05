@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const Hanging = require("../../Schemas/Hangings");
+const Hanging = require("../../Schemas/Wedgies/Hangings");
 const fs = require("fs");
 
 const images = require("../../Json/multiple/hanging.json");

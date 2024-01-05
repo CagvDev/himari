@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const Centaur = require("../../Schemas/Centaurs");
-const fs = require("fs");
-
+const Centaur = require("../../Schemas/Wedgies/Centaurs");
 const images = require("../../Json/centaur.json");
-
-const wedgieImages = images.wedgies;
+const { getRandomImage } = require("../../Functions/imageLoader");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,14 +15,6 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    let interactionResponded = false;
-    if (interactionResponded) {
-      console.log("La interacción ya ha sido respondida.");
-      return;
-    }
-    // ! Procesar la interacción y responder aquí
-    interactionResponded = true;
-
     const taggedUser = interaction.options.getMember("user");
     const taggedUser2 = interaction.options.getMember("user2");
     const invokerUser = interaction.member;
@@ -55,35 +44,22 @@ module.exports = {
         description = `**${invokerUser.displayName}** put herself and **${taggedUser.displayName}** in a centaur wedgie`;
       }
 
-      // ! Seleccionar aleatoriamente una imagen del array
-      let randomImage;
-
-      try {
-        if (wedgieImages.length > 0) {
-          randomImage =
-            wedgieImages[Math.floor(Math.random() * wedgieImages.length)];
-        } else {
-          throw new Error("El array de imágenes está vacío.");
-        }
-      } catch (error) {
-        console.error("Error al seleccionar la imagen:", error);
-        randomImage = wedgieImages[0];
-      }
-
       const embed = new EmbedBuilder()
         .setColor("Random")
         .addFields({
           name: " ",
           value: `${description} \n**${taggedUser.displayName}** and **${taggedUser2.displayName}** has been in a centaur wedgie **${centaur1.tagCount}** and **${centaur2.tagCount}** times.`,
         })
-        .setImage(randomImage);
+        .setImage(getRandomImage(images));
 
       await interaction.reply({
         embeds: [embed],
       });
     } catch (error) {
       console.error("Error al guardar el usuario en la base de datos:", error);
-      await interaction.reply("Ha ocurrido un error al procesar el comando.");
+      await interaction.reply(
+        "An error occurred while processing the command."
+      );
     }
   },
 };

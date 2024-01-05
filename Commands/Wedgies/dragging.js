@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const Dragging = require("../../Schemas/Draggings");
-const fs = require("fs");
-
+const Dragging = require("../../Schemas/Wedgies/Draggings");
 const images = require("../../Json/dragging.json");
-
-const wedgieImages = images.wedgies;
+const { getRandomImage } = require("../../Functions/imageLoader");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,14 +12,6 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    let interactionResponded = false;
-    if (interactionResponded) {
-      console.log("La interacción ya ha sido respondida.");
-      return;
-    }
-    // ! Procesar la interacción y responder aquí
-    interactionResponded = true;
-
     const taggedUser = interaction.options.getMember("user");
     const invokerUser = interaction.member;
 
@@ -41,28 +30,13 @@ module.exports = {
         description = `**${invokerUser.displayName}** drag themself in a wedgie`;
       }
 
-      // ! Seleccionar aleatoriamente una imagen del array
-      let randomImage;
-
-      try {
-        if (wedgieImages.length > 0) {
-          randomImage =
-            wedgieImages[Math.floor(Math.random() * wedgieImages.length)];
-        } else {
-          throw new Error("El array de imágenes está vacío.");
-        }
-      } catch (error) {
-        console.error("Error al seleccionar la imagen:", error);
-        randomImage = wedgieImages[0];
-      }
-
       const embed = new EmbedBuilder()
         .setColor("Random")
         .addFields({
           name: " ",
           value: `${description} \n**${taggedUser.displayName}** has received dragging wedgies **${dragging.tagCount}** times`,
         })
-        .setImage(randomImage);
+        .setImage(getRandomImage(images));
 
       await interaction.reply({
         embeds: [embed],

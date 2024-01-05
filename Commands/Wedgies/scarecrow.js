@@ -1,10 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const Scarecrow = require("../../Schemas/Scarecrows");
-const fs = require("fs");
-
+const Scarecrow = require("../../Schemas/Wedgies/Scarecrows");
 const images = require("../../Json/scarecrow.json");
-
-const wedgieImages = images.wedgies;
+const { getRandomImage } = require("../../Functions/imageLoader");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,14 +12,6 @@ module.exports = {
     ),
 
   async execute(interaction) {
-    let interactionResponded = false;
-    if (interactionResponded) {
-      console.log("La interacción ya ha sido respondida.");
-      return;
-    }
-    // ! Procesar la interacción y responder aquí
-    interactionResponded = true;
-
     const taggedUser = interaction.options.getMember("user");
     const invokerUser = interaction.member;
 
@@ -62,14 +51,16 @@ module.exports = {
           name: " ",
           value: `${description} \n**${taggedUser.displayName}** has received **${scarecrow.tagCount}** scarecrow wedgies`,
         })
-        .setImage(randomImage);
+        .setImage(getRandomImage(images));
 
       await interaction.reply({
         embeds: [embed],
       });
     } catch (error) {
       console.error("Error al guardar el usuario en la base de datos:", error);
-      await interaction.reply("Ha ocurrido un error al procesar el comando.");
+      await interaction.reply(
+        "An error occurred while processing the command."
+      );
     }
   },
 };
